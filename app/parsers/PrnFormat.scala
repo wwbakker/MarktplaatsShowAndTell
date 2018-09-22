@@ -3,8 +3,18 @@ package parsers
 import cats._
 import cats.implicits._
 
-case class PrnFormat(columnLengths : Seq[Int]) extends FileFormat {
-  import FileFormat._
+object PrnFormat {
+  def determineColumnLengths(firstLine : String) : Seq[Int] = {
+    // Columns consist of:
+    // 1 or more non-whitespace characters
+    // followed by 0 or more spaces
+    val columnPattern = "\\S+\\s*".r
+    columnPattern.findAllIn(firstLine).map(_.length).toSeq
+  }
+}
+
+case class PrnFormat(columnLengths : Seq[Int]) extends NewlineSeperatedFileFormat {
+  import NewlineSeperatedFileFormat._
 
   private case class SubstringIndices(startIndex : Int, // inclusive
                                       endIndex : Int  ) // exclusive

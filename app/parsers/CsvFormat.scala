@@ -3,8 +3,8 @@ package parsers
 import cats._
 import cats.implicits._
 
-case object CsvFormat extends FileFormat {
-  import FileFormat._
+case object CsvFormat extends NewlineSeperatedFileFormat {
+  import NewlineSeperatedFileFormat._
 
   case class ParseColumnState(restOfLine : String, parsedColumns : Seq[String])
 
