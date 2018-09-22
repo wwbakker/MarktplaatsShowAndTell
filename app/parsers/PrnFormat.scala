@@ -27,7 +27,7 @@ case class PrnFormat(columnLengths : Seq[Int]) extends NewlineSeperatedFileForma
 
   override def lineSplitInColumns(line : String) : Either[ParseError, SplitColumns] =
     Either.catchOnly[StringIndexOutOfBoundsException](
-      startEndIndices.map(indices => line.substring(indices.startIndex, indices.endIndex))
-    ).swap.map(_ => "Content lines are not even with header line.").swap
+      startEndIndices.map(indices => line.substring(indices.startIndex, indices.endIndex).trim)
+    ).swap.map(_ => "A content line is not even with header line.").swap
 
 }

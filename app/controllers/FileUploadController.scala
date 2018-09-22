@@ -23,6 +23,7 @@ class FileUploadController @Inject()(cc: ControllerComponents,
     NewlineSeperatedFileFormat.fileFormatFuture(inputSource).map(format =>
       inputSource
         .via(NewlineSeperatedFileFormat.lineReaderFlow)
+        .drop(1) // ignore the header line
         .map(format.lineSplitInColumns)
         .via(logParseErrorAndCollectResultsFlow)
     )
