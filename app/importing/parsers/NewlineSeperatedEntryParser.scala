@@ -8,9 +8,8 @@ import importing.Importer
 object NewlineSeperatedEntryParser {
   type SplitColumns = Seq[String]
 
-  def lineReaderFlow: Flow[ByteString, String, NotUsed] =
+  def lineReaderFlow: Flow[ByteString, ByteString, NotUsed] =
     Framing.delimiter(ByteString("\n"), 1024)
-      .map(_.utf8String)
 
 }
 
