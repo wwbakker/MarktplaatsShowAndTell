@@ -1,15 +1,15 @@
-package parsers
+package importing.parsers
 
-import cats._
 import cats.implicits._
+import importing.Importer.ImportErrorOr
 
-case object CsvFormat extends NewlineSeperatedFileFormat {
+case object CsvParser extends NewlineSeperatedEntryParser {
 
-  import NewlineSeperatedFileFormat._
+  import NewlineSeperatedEntryParser._
 
   case class ParseColumnState(restOfLine: String, parsedColumns: Seq[String])
 
-  def parseQuotedColumn(pcs: ParseColumnState): Either[ParseError, ParseColumnState] = {
+  def parseQuotedColumn(pcs: ParseColumnState): ImportErrorOr[ParseColumnState] = {
     // take the first match which is surrounded by quotes and ends in either a , or at the end of the line
     // this does not match on escaped double quotes inside a quoted string
     val fullMatchEither = Either.fromOption(
@@ -27,7 +27,7 @@ case object CsvFormat extends NewlineSeperatedFileFormat {
       .map(columnValue => ParseColumnState(pcs.restOfLine.substring(charactersRead), pcs.parsedColumns :+ columnValue))
   }
 
-  def parseUnquotedColumn(pcs: ParseColumnState): Either[ParseError, ParseColumnState] = {
+  def parseUnquotedColumn(pcs: ParseColumnState): ImportErrorOr[ParseColumnState] = {
     val columnValue = pcs.restOfLine.takeWhile(_ != ',')
     val commaAfterValue = pcs.restOfLine.contains(',')
     val nextPossibleColumnIndex =
@@ -40,7 +40,7 @@ case object CsvFormat extends NewlineSeperatedFileFormat {
     )
   }
 
-  def parseColumns(pcs: ParseColumnState): Either[ParseError, ParseColumnState] = {
+  def parseColumns(pcs: ParseColumnState): ImportErrorOr[ParseColumnState] = {
     if (pcs.restOfLine.isEmpty)
       Right(pcs)
     else if (pcs.restOfLine.startsWith("\""))
@@ -49,7 +49,7 @@ case object CsvFormat extends NewlineSeperatedFileFormat {
       parseUnquotedColumn(pcs).flatMap(parseColumns)
   }
 
-  override def lineSplitInColumns(line: String): Either[ParseError, SplitColumns] =
+  override def lineSplitInColumns(line: String): ImportErrorOr[SplitColumns] =
     parseColumns(ParseColumnState(line, Seq.empty[String])).map(_.parsedColumns)
 
 }

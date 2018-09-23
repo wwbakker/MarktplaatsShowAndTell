@@ -2,20 +2,18 @@ package controllers
 
 
 import akka.NotUsed
-import akka.stream.scaladsl.{FileIO, Flow, Source}
-import akka.stream.{IOResult, Materializer}
-import akka.util.ByteString
+import akka.stream.Materializer
+import akka.stream.scaladsl.Flow
+import importing.Importer
+import importing.Importer.ImportErrorOr
 import javax.inject.Inject
-import model.ImportEntry
-import parsers.NewlineSeperatedFileFormat.{ParseError, SplitColumns}
-import parsers._
 import play.api.Logger
 import play.api.mvc.{AbstractController, ControllerComponents}
 
-import scala.concurrent.{ExecutionContext}
+import scala.concurrent.ExecutionContext
 
 class FileUploadController @Inject()(cc: ControllerComponents,
-                                     importEntryParser: ImportEntryParser,
+                                     importEntryParser: Importer,
                                      implicit val mat : Materializer,
                                      implicit val ec : ExecutionContext) extends AbstractController(cc) {
   implicit val logger : Logger = Logger(classOf[FileUploadController])
@@ -27,8 +25,8 @@ class FileUploadController @Inject()(cc: ControllerComponents,
     ???
   }
 
-  def logParseErrorAndCollectResultsFlow[A] : Flow[Either[ParseError, A], A, NotUsed] =
-    Flow[Either[ParseError, A]].map{parseResult =>
+  def logParseErrorAndCollectResultsFlow[A] : Flow[ImportErrorOr[A], A, NotUsed] =
+    Flow[ImportErrorOr[A]].map{parseResult =>
       parseResult.swap.foreach(logger.error(_))
       parseResult
     }.collect[A]{

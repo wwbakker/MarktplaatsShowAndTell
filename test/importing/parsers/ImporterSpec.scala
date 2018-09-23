@@ -1,4 +1,4 @@
-package parsers
+package importing.parsers
 
 import java.nio.file.{Path, Paths}
 
@@ -8,16 +8,17 @@ import akka.stream.{ActorMaterializer, Materializer}
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec, WordSpecLike}
 import akka.stream.testkit._
 import akka.testkit._
+import importing.Importer
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext}
 
-class ImportEntryParserSpec extends TestKit(ActorSystem("MySpec")) with ImplicitSender
+class ImporterSpec extends TestKit(ActorSystem("MySpec")) with ImplicitSender
   with WordSpecLike with Matchers with BeforeAndAfterAll {
 
   implicit val ec: ExecutionContext = system.dispatcher
   implicit val mat: Materializer = ActorMaterializer()
-  val iep = new ImportEntryParser()
+  val iep = new Importer()
 
   override def afterAll: Unit = {
     TestKit.shutdownActorSystem(system)
@@ -29,7 +30,6 @@ class ImportEntryParserSpec extends TestKit(ActorSystem("MySpec")) with Implicit
         iep.importEntriesSource(Paths.get("Workbook2.prn")).runWith(Sink.seq),
         10.seconds)
       result shouldBe Seq()
-
     }
 
   }

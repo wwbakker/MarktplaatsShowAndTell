@@ -1,9 +1,9 @@
-package parsers
+package importing.parsers
 
-import cats._
 import cats.implicits._
+import importing.Importer.ImportErrorOr
 
-object PrnFormat {
+object PrnParser {
   def determineColumnLengths(firstLine : String) : Seq[Int] = {
     // Columns consist of:
     // 1 or more non-whitespace characters
@@ -13,8 +13,8 @@ object PrnFormat {
   }
 }
 
-case class PrnFormat(columnLengths : Seq[Int]) extends NewlineSeperatedFileFormat {
-  import NewlineSeperatedFileFormat._
+case class PrnParser(columnLengths : Seq[Int]) extends NewlineSeperatedEntryParser {
+  import NewlineSeperatedEntryParser._
 
   private case class SubstringIndices(startIndex : Int, // inclusive
                                       endIndex : Int  ) // exclusive
@@ -25,7 +25,7 @@ case class PrnFormat(columnLengths : Seq[Int]) extends NewlineSeperatedFileForma
       SubstringIndices(startIndex, startIndex + columnLength) :: accumulator
     }.reverse
 
-  override def lineSplitInColumns(line : String) : Either[ParseError, SplitColumns] =
+  override def lineSplitInColumns(line : String) : ImportErrorOr[SplitColumns] =
     Either.catchOnly[StringIndexOutOfBoundsException](
       startEndIndices.map(indices => line.substring(indices.startIndex, indices.endIndex).trim)
     ).swap.map(_ => "A content line is not even with header line.").swap

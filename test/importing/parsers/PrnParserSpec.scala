@@ -1,10 +1,10 @@
-package parsers
+package importing.parsers
 
 import org.scalatest.{Matchers, WordSpec}
 
-class PrnFormatSpec extends WordSpec with Matchers{
+class PrnParserSpec extends WordSpec with Matchers{
   "PrnFormat" should {
-    val format = PrnFormat(Seq(5, 2, 3))
+    val format = PrnParser(Seq(5, 2, 3))
     "give the correct result with the exact size" in {
       val line = """12345ab123"""
       format.lineSplitInColumns(line) shouldBe Right(Seq("12345","ab","123"))
