@@ -24,14 +24,14 @@ class FileUploadController @Inject()(cc: ControllerComponents,
   def upload: Action[MultipartFormData[Files.TemporaryFile]] = Action.async(parse.multipartFormData) { request =>
     request.body.file("creditLimits").map(file =>
       creditLimitReader.readerSource(file.ref)
-        .via(logParseErrorAndCollectResultsFlow)
+        .via(logReadErrorsAndCollectResultsFlow)
         .mapAsync(1)(creditLimitRepository.insert)
         .runWith(Sink.ignore)
         .map(_ => Redirect(routes.HomeController.index()))
     ).getOrElse(Future.successful(NotAcceptable("Missing file")))
   }
 
-  def logParseErrorAndCollectResultsFlow[A] : Flow[ReadErrorOr[A], A, NotUsed] =
+  def logReadErrorsAndCollectResultsFlow[A] : Flow[ReadErrorOr[A], A, NotUsed] =
     Flow[ReadErrorOr[A]].map{ parseResult =>
       parseResult.swap.foreach(logger.error(_))
       parseResult
