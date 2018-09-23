@@ -51,12 +51,9 @@ class Importer @Inject()(implicit val mat : Materializer,
     )
 
   def firstLineFuture(source: Source[ByteString, _])(implicit ec: ExecutionContext, mat: Materializer): Future[String] =
-    source
-      // concatenate all the bytes until then
-      .runFold(ByteString(""))(_.concat(_))
-      // convert it to a string
+    source.via(NewlineSeperatedEntryParser.lineReaderFlow)
+      .take(1)
       .map(_.utf8String)
-      // remove the bytes after the newline
-      .map ( content => content.takeWhile( _ != '\n') )
+      .runReduce(_+_)
 
 }

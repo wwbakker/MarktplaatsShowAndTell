@@ -25,7 +25,7 @@ object CsvImportEntryMapper extends ColumnMapper {
     (creditLimitInEuros.toFloat * 100f).floor.toInt
 
   lazy val slashPattern : DateTimeFormatter =
-    DateTimeFormatter.ofPattern("dd/MM/yyyy")
+    DateTimeFormatter.ofPattern("dd/MM/uuuu")
 
   def parseBirthDay(s : String) : LocalDate =
       LocalDate.parse(s, slashPattern)

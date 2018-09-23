@@ -8,8 +8,14 @@ import importing.Importer
 object NewlineSeperatedEntryParser {
   type SplitColumns = Seq[String]
 
-  def lineReaderFlow: Flow[ByteString, ByteString, NotUsed] =
+  private def filterCarriageReturns : Flow[ByteString, ByteString, NotUsed] =
+    Flow[ByteString].map(_.filter(_ != 13))
+
+  private def splitOnNewlines : Flow[ByteString, ByteString, NotUsed] =
     Framing.delimiter(ByteString("\n"), 1024)
+
+  def lineReaderFlow: Flow[ByteString, ByteString, NotUsed] =
+    Flow[ByteString].via(filterCarriageReturns).via(splitOnNewlines)
 
 }
 
