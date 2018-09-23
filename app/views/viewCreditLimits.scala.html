@@ -1,0 +1,14 @@
+@import model.CreditLimit
+@(creditLimits: Seq[CreditLimit])
+<table>
+    @for(creditLimit <- creditLimits) {
+        <tr>
+            <td>@(creditLimit.name)</td>
+            <td>@(creditLimit.address)</td>
+            <td>@(creditLimit.postalCode)</td>
+            <td>@(creditLimit.phoneNumber)</td>
+            <td>@(creditLimit.creditLimitInCents)</td>
+            <td>@(creditLimit.birthday.toString)</td>
+        </tr>
+    }
+</table>

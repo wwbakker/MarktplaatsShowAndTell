@@ -2,7 +2,7 @@ package model
 
 import java.time.LocalDate
 
-case class ImportEntry(name : String,
+case class CreditLimit(name : String,
                        address: String,
                        postalCode : String,
                        phoneNumber : String,

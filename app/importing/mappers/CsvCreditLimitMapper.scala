@@ -5,20 +5,20 @@ import java.time.format.DateTimeFormatter
 
 import cats.implicits._
 import importing.Importer.ImportErrorOr
-import model.ImportEntry
+import model.CreditLimit
 
-object CsvImportEntryMapper extends ColumnMapper {
-  override def fromColumns(columns : Seq[String]) : ImportErrorOr[ImportEntry] =
+object CsvCreditLimitMapper extends ColumnMapper {
+  override def fromColumns(columns : Seq[String]) : ImportErrorOr[CreditLimit] =
     Either.catchNonFatal(columns.toList match {
       case name :: address :: postalCode :: phoneNumber :: creditLimitInEuros :: birthday :: Nil =>
-        ImportEntry(name, address, postalCode,
+        CreditLimit(name, address, postalCode,
           phoneNumber, eurosToCents(creditLimitInEuros),
           parseBirthDay(birthday))
     }).swap.map{
       case e : MatchError =>
-        "Cannot parse ImportEntry: A line does not have the correct number of columns"
+        "Cannot parse credit limit: A line does not have the correct number of columns"
       case e =>
-        "Cannot parse ImportEntry:" + e.toString
+        "Cannot parse credit limit:" + e.toString
     }.swap
 
   def eurosToCents(creditLimitInEuros : String) : Int =

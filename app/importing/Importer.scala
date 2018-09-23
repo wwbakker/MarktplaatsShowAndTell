@@ -9,7 +9,7 @@ import importing.Importer.ImportErrorOr
 import importing.fileformats.{CsvFormat, FileFormat, PrnFormat}
 import importing.parsers.{NewlineSeperatedEntryParser, PrnParser}
 import javax.inject.Inject
-import model.ImportEntry
+import model.CreditLimit
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -21,7 +21,7 @@ object Importer {
 class Importer @Inject()(implicit val mat : Materializer,
                          implicit val ec : ExecutionContext) {
 
-  def importEntriesSource(file : Path) : Source[ImportErrorOr[ImportEntry], Future[Future[IOResult]]] = {
+  def importEntriesSource(file : Path) : Source[ImportErrorOr[CreditLimit], Future[Future[IOResult]]] = {
     def inputSource : Source[ByteString, Future[IOResult]] =
       FileIO.fromPath(file)
     val linesSourceFuture =

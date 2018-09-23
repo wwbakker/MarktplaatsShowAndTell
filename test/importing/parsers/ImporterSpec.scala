@@ -8,7 +8,7 @@ import akka.stream.scaladsl.Sink
 import akka.stream.{ActorMaterializer, Materializer}
 import akka.testkit._
 import importing.Importer
-import model.ImportEntry
+import model.CreditLimit
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import scala.concurrent.duration._
@@ -26,13 +26,13 @@ class ImporterSpec extends TestKit(ActorSystem("MySpec")) with ImplicitSender
   }
 
   val expectedDataSet = Vector(
-    Right(ImportEntry("Johnson, John", "Voorstraat 32", "3122gg", "020 3849381", 1000000, LocalDate.parse("1987-01-01"))),
-    Right(ImportEntry("Anderson, Paul", "Dorpsplein 3A", "4532 AA", "030 3458986", 10909300, LocalDate.parse("1965-12-03"))),
-    Right(ImportEntry("Wicket, Steve", "Mendelssohnstraat 54d", "3423 ba", "0313-398475", 93400, LocalDate.parse("1964-06-03"))),
-    Right(ImportEntry("Benetar, Pat", "Driehoog 3zwart", "2340 CC", "06-28938945", 54, LocalDate.parse("1964-09-04"))),
-    Right(ImportEntry("Gibson, Mal", "Vredenburg 21", "3209 DD", "06-48958986", 5450, LocalDate.parse("1978-11-09"))),
-    Right(ImportEntry("Friendly, User", "Sint Jansstraat 32", "4220 EE", "0885-291029", 6360, LocalDate.parse("1980-08-10"))),
-    Right(ImportEntry("Smith, John", "Børkestraße 32", "87823", "+44 728 889838", 989830, LocalDate.parse("1999-09-20")))
+    Right(CreditLimit("Johnson, John", "Voorstraat 32", "3122gg", "020 3849381", 1000000, LocalDate.parse("1987-01-01"))),
+    Right(CreditLimit("Anderson, Paul", "Dorpsplein 3A", "4532 AA", "030 3458986", 10909300, LocalDate.parse("1965-12-03"))),
+    Right(CreditLimit("Wicket, Steve", "Mendelssohnstraat 54d", "3423 ba", "0313-398475", 93400, LocalDate.parse("1964-06-03"))),
+    Right(CreditLimit("Benetar, Pat", "Driehoog 3zwart", "2340 CC", "06-28938945", 54, LocalDate.parse("1964-09-04"))),
+    Right(CreditLimit("Gibson, Mal", "Vredenburg 21", "3209 DD", "06-48958986", 5450, LocalDate.parse("1978-11-09"))),
+    Right(CreditLimit("Friendly, User", "Sint Jansstraat 32", "4220 EE", "0885-291029", 6360, LocalDate.parse("1980-08-10"))),
+    Right(CreditLimit("Smith, John", "Børkestraße 32", "87823", "+44 728 889838", 989830, LocalDate.parse("1999-09-20")))
   )
 
   "ImportEntryParser" must {
