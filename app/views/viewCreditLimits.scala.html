@@ -1,14 +1,32 @@
 @import model.CreditLimit
 @(creditLimits: Seq[CreditLimit])
-<table>
-    @for(creditLimit <- creditLimits) {
-        <tr>
-            <td>@(creditLimit.name)</td>
-            <td>@(creditLimit.address)</td>
-            <td>@(creditLimit.postalCode)</td>
-            <td>@(creditLimit.phoneNumber)</td>
-            <td>@(creditLimit.creditLimitInCents)</td>
-            <td>@(creditLimit.birthday.toString)</td>
-        </tr>
+<div class="container">
+    <h1>Credit limits</h1>
+
+    @if(creditLimits.isEmpty) {
+        No credit limits have yet been uploaded.
+    }else{
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Postal code</th>
+                    <th scope="col">Phone number</th>
+                    <th scope="col">Credit limit</th>
+                    <th scope="col">Birthday</th>
+                </tr>
+            </thead>
+            @for(creditLimit <- creditLimits) {
+                <tr>
+                    <td>@(creditLimit.name)</td>
+                    <td>@(creditLimit.address)</td>
+                    <td>@(creditLimit.postalCode)</td>
+                    <td>@(creditLimit.phoneNumber)</td>
+                    <td>&euro;@(creditLimit.creditLimitInCents / 100d)</td>
+                    <td>@(creditLimit.birthday.toString)</td>
+                </tr>
+            }
+        </table>
     }
-</table>
+</div>

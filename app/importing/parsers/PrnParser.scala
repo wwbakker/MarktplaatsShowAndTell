@@ -1,10 +1,10 @@
 package importing.parsers
 
 import cats.implicits._
-import importing.Importer.ImportErrorOr
+import importing.CreditLimitReader.ReadErrorOr
 
 object PrnParser {
-  def determineColumnLengths(firstLine : String) : Seq[Int] = {
+  def determineColumnWidth(firstLine : String) : Seq[Int] = {
     // Columns consist of:
     // 1 or more non-whitespace characters
     // followed by 0 or more spaces
@@ -25,7 +25,7 @@ case class PrnParser(columnLengths : Seq[Int]) extends NewlineSeperatedEntryPars
       SubstringIndices(startIndex, startIndex + columnLength) :: accumulator
     }.reverse
 
-  override def lineSplitInColumns(line : String) : ImportErrorOr[SplitColumns] =
+  override def lineSplitInColumns(line : String) : ReadErrorOr[SplitColumns] =
     Either.catchOnly[StringIndexOutOfBoundsException](
       startEndIndices.map(indices => line.substring(indices.startIndex, indices.endIndex).trim)
     ).swap.map(_ => "A content line is not even with header line.").swap

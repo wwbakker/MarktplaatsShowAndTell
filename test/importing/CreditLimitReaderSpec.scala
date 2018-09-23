@@ -1,4 +1,4 @@
-package importing.parsers
+package importing
 
 import java.nio.file.Paths
 import java.time.LocalDate
@@ -7,19 +7,18 @@ import akka.actor.ActorSystem
 import akka.stream.scaladsl.Sink
 import akka.stream.{ActorMaterializer, Materializer}
 import akka.testkit._
-import importing.Importer
 import model.CreditLimit
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext}
 
-class ImporterSpec extends TestKit(ActorSystem("MySpec")) with ImplicitSender
+class CreditLimitReaderSpec extends TestKit(ActorSystem("MySpec")) with ImplicitSender
   with WordSpecLike with Matchers with BeforeAndAfterAll {
 
   implicit val ec: ExecutionContext = system.dispatcher
   implicit val mat: Materializer = ActorMaterializer()
-  val iep = new Importer()
+  val iep = new CreditLimitReader()
 
   override def afterAll: Unit = {
     TestKit.shutdownActorSystem(system)
@@ -38,14 +37,14 @@ class ImporterSpec extends TestKit(ActorSystem("MySpec")) with ImplicitSender
   "ImportEntryParser" must {
     "import prn format correctly" in {
       val result = Await.result(
-        iep.importEntriesSource(Paths.get("Workbook2.prn")).runWith(Sink.seq),
+        iep.readerSource(Paths.get("Workbook2.prn")).runWith(Sink.seq),
         10.seconds)
       result.zip(expectedDataSet).foreach{case (x, y) => x shouldBe y}
     }
 
     "import csv format correctly" in {
       val result = Await.result(
-        iep.importEntriesSource(Paths.get("Workbook2.csv")).runWith(Sink.seq),
+        iep.readerSource(Paths.get("Workbook2.csv")).runWith(Sink.seq),
         10.seconds)
       result.zip(expectedDataSet).foreach{case (x, y) => x shouldBe y}
     }

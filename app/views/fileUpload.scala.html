@@ -1,10 +1,14 @@
 @()
-@helper.form(routes.FileUploadController.upload(), 'enctype -> "multipart/form-data") {
-    <div>
-        <label for="file">Choose file to upload (accepted formats are csv and prn)</label>
-        <input type="file" id="temporaryFile" name="temporaryFile">
-    </div>
-    <div>
-        <button>Submit</button>
-    </div>
-}
+    @helper.form(routes.FileUploadController.upload(), 'enctype -> "multipart/form-data") {
+        <div class="container">
+            <h1>Import new credit limits</h1>
+                <div class="form-group col-8">
+                    <label for="file">Upload new credit limit import files here</label>
+                    <input class="form-control form-control-file" type="file" id="creditLimits" name="creditLimits">
+                    <small class="form-text text-muted">Accepted formats are *.csv and *.prn.</small>
+                </div>
+                <div class="form-group col-4">
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </div>
+        </div>
+    }

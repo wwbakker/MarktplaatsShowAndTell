@@ -1,8 +1,8 @@
 package importing.mappers
 
-import importing.Importer.ImportErrorOr
+import importing.CreditLimitReader.ReadErrorOr
 import model.CreditLimit
 
 trait ColumnMapper {
-  def fromColumns(columns : Seq[String]) : ImportErrorOr[CreditLimit]
+  def fromColumns(columns : Seq[String]) : ReadErrorOr[CreditLimit]
 }

@@ -12,6 +12,7 @@ libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2
 libraryDependencies += "org.typelevel" %% "cats-core" % "1.3.1"
 libraryDependencies += "com.typesafe.akka" %% "akka-stream-testkit" % "2.5.16" % Test
 libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % "2.5.16" % Test
+libraryDependencies += "org.webjars" % "bootstrap" % "4.1.3"
 
 fork in Test := false
 

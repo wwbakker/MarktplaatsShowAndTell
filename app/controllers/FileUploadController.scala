@@ -4,8 +4,8 @@ package controllers
 import akka.NotUsed
 import akka.stream.Materializer
 import akka.stream.scaladsl.{Flow, Sink}
-import importing.Importer
-import importing.Importer.ImportErrorOr
+import importing.CreditLimitReader
+import importing.CreditLimitReader.ReadErrorOr
 import javax.inject.Inject
 import play.api.Logger
 import play.api.libs.Files
@@ -15,15 +15,15 @@ import repositories.CreditLimitRepository
 import scala.concurrent.{ExecutionContext, Future}
 
 class FileUploadController @Inject()(cc: ControllerComponents,
-                                     importEntryParser: Importer,
+                                     creditLimitReader: CreditLimitReader,
                                      creditLimitRepository: CreditLimitRepository,
                                      implicit val mat : Materializer,
                                      implicit val ec : ExecutionContext) extends AbstractController(cc) {
   implicit val logger : Logger = Logger(classOf[FileUploadController])
 
   def upload: Action[MultipartFormData[Files.TemporaryFile]] = Action.async(parse.multipartFormData) { request =>
-    request.body.file("temporaryFile").map(file =>
-      importEntryParser.importEntriesSource(file.ref)
+    request.body.file("creditLimits").map(file =>
+      creditLimitReader.readerSource(file.ref)
         .via(logParseErrorAndCollectResultsFlow)
         .mapAsync(1)(creditLimitRepository.insert)
         .runWith(Sink.ignore)
@@ -31,8 +31,8 @@ class FileUploadController @Inject()(cc: ControllerComponents,
     ).getOrElse(Future.successful(NotAcceptable("Missing file")))
   }
 
-  def logParseErrorAndCollectResultsFlow[A] : Flow[ImportErrorOr[A], A, NotUsed] =
-    Flow[ImportErrorOr[A]].map{parseResult =>
+  def logParseErrorAndCollectResultsFlow[A] : Flow[ReadErrorOr[A], A, NotUsed] =
+    Flow[ReadErrorOr[A]].map{ parseResult =>
       parseResult.swap.foreach(logger.error(_))
       parseResult
     }.collect[A]{

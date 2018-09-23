@@ -5,7 +5,7 @@ import java.nio.file.Path
 import akka.stream.scaladsl.{FileIO, Source}
 import akka.stream.{IOResult, Materializer}
 import akka.util.ByteString
-import importing.Importer.ImportErrorOr
+import importing.CreditLimitReader.ReadErrorOr
 import importing.fileformats.{CsvFormat, FileFormat, PrnFormat}
 import importing.parsers.{NewlineSeperatedEntryParser, PrnParser}
 import javax.inject.Inject
@@ -13,15 +13,15 @@ import model.CreditLimit
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object Importer {
+object CreditLimitReader {
   type ErrorMessage = String
-  type ImportErrorOr[A] = Either[ErrorMessage, A]
+  type ReadErrorOr[A] = Either[ErrorMessage, A]
 }
 
-class Importer @Inject()(implicit val mat : Materializer,
-                         implicit val ec : ExecutionContext) {
+class CreditLimitReader @Inject()(implicit val mat : Materializer,
+                                  implicit val ec : ExecutionContext) {
 
-  def importEntriesSource(file : Path) : Source[ImportErrorOr[CreditLimit], Future[Future[IOResult]]] = {
+  def readerSource(file : Path) : Source[ReadErrorOr[CreditLimit], Future[Future[IOResult]]] = {
     def inputSource : Source[ByteString, Future[IOResult]] =
       FileIO.fromPath(file)
     val linesSourceFuture =
@@ -47,7 +47,7 @@ class Importer @Inject()(implicit val mat : Materializer,
       if (firstLine.contains(","))
         CsvFormat
       else
-        new PrnFormat(PrnParser.determineColumnLengths(firstLine))
+        new PrnFormat(PrnParser.determineColumnWidth(firstLine))
     )
 
   def firstLineFuture(source: Source[ByteString, _])(implicit ec: ExecutionContext, mat: Materializer): Future[String] =
