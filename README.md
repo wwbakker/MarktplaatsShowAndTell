@@ -1,5 +1,5 @@
-#Credit limit tracker
-## Description
+# Credit limit tracker
+
 This application is a proof of concept for a system that 
 can keep track of credit limits from several sources.
 
